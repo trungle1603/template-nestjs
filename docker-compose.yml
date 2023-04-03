@@ -1,0 +1,31 @@
+version: '3.9'
+services:
+    mongo:
+        image: mongo
+        ports:
+            - 27017:27017
+        volumes:
+            - ./data/mongo:/data/db
+
+    redis:
+        image: redis:alpine
+        ports:
+            - 6379:6379
+        volumes:
+            - ./data/redis:/data
+        command: redis-server --requirepass ${REDIS_PASSWORD}
+
+volumes:
+    mongo:
+    postgres:
+    redis:
+####################################################
+# Shutdown: docker-compose down
+# Run: docker-compose up -d
+# Rebuild: docker-compose up -d --build
+
+# docker-compose up -d -V --build
+# -d: Run the containers in detached mode
+# -V: Forces a fresh install of the dependencies in the container (required as we've installed new npm packages)
+# --build: Rebuilds the images (required as we edited the Dockerfile)
+
