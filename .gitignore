@@ -1,0 +1,9 @@
+node_modules
+data
+certificates
+public
+dist
+
+.env*
+*.log
+!.env.example

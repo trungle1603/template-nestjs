@@ -1,0 +1,313 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Role {
+  _id: ObjectID!
+  createdAt: DateTime
+  updatedAt: DateTime
+  name: RoleEnum!
+  permissions: [String!]!
+}
+
+"""
+A field whose value conforms with the standard mongodb object ID as described here: https://docs.mongodb.com/manual/reference/method/ObjectId/#ObjectId. Example: 5e5677d71bdc2ae76344968c
+"""
+scalar ObjectID
+
+"""
+A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+"""
+scalar DateTime
+
+enum RoleEnum {
+  ADMIN
+  USER
+  GUEST
+}
+
+type User {
+  _id: ObjectID!
+  createdAt: DateTime
+  updatedAt: DateTime
+
+  """This is url profile picture"""
+  displayName: String!
+  email: String!
+  roles: [Role!]!
+  isEmailVerified: Boolean!
+}
+
+type Category {
+  _id: ObjectID!
+  createdAt: DateTime
+  updatedAt: DateTime
+  name: String!
+  slug: String!
+}
+
+type Tag {
+  _id: ObjectID!
+  createdAt: DateTime
+  updatedAt: DateTime
+  name: String!
+  slug: String!
+  description: String
+}
+
+type Article {
+  _id: ObjectID!
+  createdAt: DateTime
+  updatedAt: DateTime
+  title: String!
+  content: String!
+  slug: String!
+  status: ArticleStatusEnum!
+  author: User!
+  category: Category!
+  tags: [Tag!]!
+}
+
+enum ArticleStatusEnum {
+  PENDING
+  PUBLISHED
+  REJECT
+  ARCHIVED
+}
+
+type Auth {
+  "Access token sign by server.\r\nUse to access resource."
+  accessToken: String!
+
+  "Refresh token sign by server.\r\nUse to refresh token."
+  refreshToken: String!
+
+  """Use public key to verify and decode accessToken and refreshToken"""
+  publicKey: String!
+}
+
+type GridFsFile {
+  _id: ObjectID!
+  length: Int!
+  chunkSize: Int!
+  uploadDate: DateTime!
+  filename: String!
+  contentType: String!
+}
+
+type ProfilePicture {
+  _id: ObjectID!
+  createdAt: DateTime
+  updatedAt: DateTime
+  author: ObjectID!
+  originalname: String!
+  mimetype: String!
+  size: Float!
+  buffer: String!
+}
+
+type Query {
+  getAllArticle(filter: FilterGetAllArticleInput, pagination: PaginationInput): [Article!]!
+  getOneArticle(filter: BaseInput!): Article!
+  getAllUser(filter: FilterGetAllUserInput, pagination: PaginationInput): [User!]!
+  getOneUser(filter: FilterGetOneUserInput!): User!
+  getMyInformation: User!
+  getAllCategory(filter: FilterGetAllCategoryInput, pagination: PaginationInput): [Category!]!
+  getOneCategory(filter: BaseInput!): Category!
+  getGridFsFile(args: BaseInput!): GridFsFile!
+  getProfilePicture: ProfilePicture!
+  getAllTag(filter: FilterGetAllTagInput, pagination: PaginationInput): [Tag!]!
+  getOneTag(filter: BaseInput!): Tag!
+}
+
+input FilterGetAllArticleInput {
+  category: ObjectID
+  tags: [ObjectID!]
+
+  """Title just accept string and space"""
+  title: String
+  content: String
+  status: ArticleStatusEnum
+}
+
+input PaginationInput {
+  pageNumber: Int! = 1
+  pageSize: Int! = 10
+  sort: SortInput! = {createdAt: ASCENDING}
+}
+
+input SortInput {
+  createdAt: SortTypeEnum! = ASCENDING
+}
+
+enum SortTypeEnum {
+  ASCENDING
+  DESCENDING
+}
+
+input BaseInput {
+  """_id is a object id"""
+  _id: ObjectID!
+}
+
+input FilterGetAllUserInput {
+  """Only allow letters, numbers, spaces, and hyphens"""
+  displayName: String
+
+  "Starts with one or more characters that are not whitespace or '@', followed by an '@' symbol\r\nThen one or more characters that are not whitespace or '@', followed by a '.'\r\nAnd then one or more characters that are not whitespace or '@'"
+  email: String
+}
+
+input FilterGetOneUserInput {
+  """_id is a object id"""
+  _id: ObjectID
+
+  "Starts with one or more characters that are not whitespace or '@', followed by an '@' symbol\r\nThen one or more characters that are not whitespace or '@', followed by a '.'\r\nAnd then one or more characters that are not whitespace or '@'"
+  email: String
+}
+
+input FilterGetAllCategoryInput {
+  """Name just accept string and space"""
+  name: String
+}
+
+input FilterGetAllTagInput {
+  """Name just accept string and space"""
+  name: String
+}
+
+type Mutation {
+  createArticle(input: CreateArticleInput!): Article!
+  updateArticle(filter: BaseInput!, input: UpdateArticleInput!): Article!
+  deleteArticle(filter: BaseInput!): String!
+  login(input: LoginInput!): Auth!
+  refreshToken: Auth!
+  signUp(input: SignUpInput!): String!
+  logout: String!
+  forgotPassword(input: ForgotPasswordInput!): String!
+  verifyForgotPassword(input: VerifyForgotPasswordInput!): String!
+  resetPassword(input: ResetPasswordInput!): String!
+  createUser(input: CreateUserInput!): User!
+  updateUser(filter: BaseInput!, input: UpdateUserInput!): User!
+  createRole(input: CreateRoleInput!): Role!
+  updatePermissionRole(input: UpdatePermissionRoleInput!): String!
+  generateListPermission: String!
+  createCategory(input: CreateCategoryInput!): Category!
+  updateCategory(filter: BaseInput!, input: UpdateCategoryInput!): Category!
+  deleteCategory(filter: BaseInput!): String!
+  deleteGridFsFile(args: BaseInput!): String!
+  createTag(input: CreateTagInput!): Tag!
+  updateTag(filter: BaseInput!, input: UpdateTagInput!): Tag!
+  deleteTag(filter: BaseInput!): String!
+}
+
+input CreateArticleInput {
+  category: ObjectID!
+  tags: [ObjectID!]!
+
+  """Title just accept string and space"""
+  title: String!
+  content: String!
+}
+
+input UpdateArticleInput {
+  category: ObjectID
+  tags: [ObjectID!]
+
+  """Title just accept string and space"""
+  title: String
+  content: String
+}
+
+input LoginInput {
+  "Starts with one or more characters that are not whitespace or '@', followed by an '@' symbol\r\nThen one or more characters that are not whitespace or '@', followed by a '.'\r\nAnd then one or more characters that are not whitespace or '@'"
+  email: String!
+
+  "Password must meet the following criteria:\r\n- Minimum of 8 characters\r\n- Maximum of 64 characters\r\n- At least one uppercase letter\r\n- At least one lowercase letter\r\n- At least one number\r\n- At least one special character (!@#$%^&*"
+  password: String!
+}
+
+input SignUpInput {
+  """Only allow letters, numbers, spaces, and hyphens"""
+  displayName: String!
+
+  "Starts with one or more characters that are not whitespace or '@', followed by an '@' symbol\r\nThen one or more characters that are not whitespace or '@', followed by a '.'\r\nAnd then one or more characters that are not whitespace or '@'"
+  email: String!
+
+  "Password must meet the following criteria:\r\n- Minimum of 8 characters\r\n- Maximum of 64 characters\r\n- At least one uppercase letter\r\n- At least one lowercase letter\r\n- At least one number\r\n- At least one special character (!@#$%^&*"
+  password: String!
+}
+
+input ForgotPasswordInput {
+  "Starts with one or more characters that are not whitespace or '@', followed by an '@' symbol\r\nThen one or more characters that are not whitespace or '@', followed by a '.'\r\nAnd then one or more characters that are not whitespace or '@'"
+  email: String!
+}
+
+input VerifyForgotPasswordInput {
+  token: String!
+
+  "Password must meet the following criteria:\r\n- Minimum of 8 characters\r\n- Maximum of 64 characters\r\n- At least one uppercase letter\r\n- At least one lowercase letter\r\n- At least one number\r\n- At least one special character (!@#$%^&*"
+  newPassword: String!
+}
+
+input ResetPasswordInput {
+  "Password must meet the following criteria:\r\n- Minimum of 8 characters\r\n- Maximum of 64 characters\r\n- At least one uppercase letter\r\n- At least one lowercase letter\r\n- At least one number\r\n- At least one special character (!@#$%^&*"
+  oldPassword: String!
+
+  "Password must meet the following criteria:\r\n- Minimum of 8 characters\r\n- Maximum of 64 characters\r\n- At least one uppercase letter\r\n- At least one lowercase letter\r\n- At least one number\r\n- At least one special character (!@#$%^&*"
+  newPassword: String!
+}
+
+input CreateUserInput {
+  """Only allow letters, numbers, spaces, and hyphens"""
+  displayName: String!
+
+  "Starts with one or more characters that are not whitespace or '@', followed by an '@' symbol\r\nThen one or more characters that are not whitespace or '@', followed by a '.'\r\nAnd then one or more characters that are not whitespace or '@'"
+  email: String!
+
+  "Password must meet the following criteria:\r\n- Minimum of 8 characters\r\n- Maximum of 64 characters\r\n- At least one uppercase letter\r\n- At least one lowercase letter\r\n- At least one number\r\n- At least one special character (!@#$%^&*"
+  password: String!
+}
+
+input UpdateUserInput {
+  """Only allow letters, numbers, spaces, and hyphens"""
+  displayName: String
+
+  "Starts with one or more characters that are not whitespace or '@', followed by an '@' symbol\r\nThen one or more characters that are not whitespace or '@', followed by a '.'\r\nAnd then one or more characters that are not whitespace or '@'"
+  email: String
+
+  "Password must meet the following criteria:\r\n- Minimum of 8 characters\r\n- Maximum of 64 characters\r\n- At least one uppercase letter\r\n- At least one lowercase letter\r\n- At least one number\r\n- At least one special character (!@#$%^&*"
+  password: String
+}
+
+input CreateRoleInput {
+  name: RoleEnum!
+  permissions: [String!]!
+}
+
+input UpdatePermissionRoleInput {
+  permissions: [String!]!
+  roleId: ObjectID!
+}
+
+input CreateCategoryInput {
+  """Name just accept string and space"""
+  name: String!
+}
+
+input UpdateCategoryInput {
+  """Name just accept string and space"""
+  name: String
+}
+
+input CreateTagInput {
+  """Name just accept string and space"""
+  name: String!
+  description: String
+}
+
+input UpdateTagInput {
+  """Name just accept string and space"""
+  name: String
+  description: String
+}
